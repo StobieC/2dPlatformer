@@ -10,9 +10,11 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
+import net.gametutorial.andengineframework.managers.ResourceManager;
 import net.gametutorial.andengineframework.managers.SceneManager;
 import net.gametutorial.andengineframework.object.Player;
 
+import org.andengine.engine.Engine;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -30,6 +32,7 @@ import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
+import org.andengine.ui.IGameInterface;
 import org.andengine.util.SAXUtils;
 import org.andengine.util.adt.align.HorizontalAlign;
 import org.andengine.util.adt.color.Color;
@@ -51,6 +54,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
     private PhysicsWorld physicsWorld;
 
     private int score=0;
+    protected Engine mEngine;
 
     private static final String TAG_LEVEL = "level";
     private static final String TAG_ENTITY = "entity";
@@ -71,13 +75,14 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
     //used for initiating gameplay
     private boolean firstTouch = false;
+    private MainMenuScene mainMenuScene;
 
 
     private void createHUD() {
         gameHUD = new HUD();
 
         // score text
-        scoreText = new Text(20, 420, resourceManager.font, "Score: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
+        scoreText = new Text(20, 0, resourceManager.font, "Score: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
         scoreText.setAnchorCenter(0, 0);
         scoreText.setText("Score: 0");
         gameHUD.attachChild(scoreText);
@@ -104,11 +109,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
         loadLevel(1);
         createGameOverText();
         setOnSceneTouchListener(this);
+        mainMenuScene = new MainMenuScene();
     }
 
     @Override
-    public void onBackKeyPressed() {
-
+    public void onBackKeyPressed()
+    {
+        SceneManager.getInstance().loadMenuScene(engine);
     }
 
     @Override
@@ -119,6 +126,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
     @Override
     public void disposeScene() {
         camera.setChaseEntity(null);
+        camera.setChaseEntity(null); //TODO
+        camera.setCenter(400, 240);
+        // TODO code responsible for disposing scene
+        // removing all game scene objects.
     }
 
     private void createBackground() {
@@ -245,7 +256,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
             }
 
             if (gameOverDisplayed) {
-                SceneManager.getInstance().setScene(SceneManager.SceneType.SCENE_MENU);
+
+                //ResourceManager.getInstance().unloadGameScreen();
+                gameHUD.setVisible(false);
+                SceneManager.getInstance().loadMenuScene(engine);
             }
         }
         return false;
@@ -334,5 +348,17 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
         };
         return contactListener;
     }
+
+    public void onPopulateScene(Scene pScene, IGameInterface.OnPopulateSceneCallback pOnPopulateSceneCallback) throws IOException {
+        mEngine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                SceneManager.getInstance().createMenuScene();
+            }
+        }));
+        pOnPopulateSceneCallback.onPopulateSceneFinished();
+    }
+
+
 
 }

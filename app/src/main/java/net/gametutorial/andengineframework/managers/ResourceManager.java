@@ -51,16 +51,13 @@ public class ResourceManager {
     public ITextureRegion platform3_region;
     public ITextureRegion coin_region;
     public ITiledTextureRegion player_region;
+    public ITextureRegion background1_region;
 
     private BitmapTextureAtlas splashTextureAtlas;
     private BuildableBitmapTextureAtlas menuTextureAtlas;
     // Game Texture
     public BuildableBitmapTextureAtlas gameTextureAtlas;
     public Font font;
-
-    //---------------------------------------------
-    // TEXTURES & TEXTURE REGIONS
-    //---------------------------------------------
 
     //---------------------------------------------
     // CLASS LOGIC
@@ -121,7 +118,7 @@ public class ResourceManager {
         platform2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "yellow_plat.png");
         platform3_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "yellow_plat.png");
         coin_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "coin.png");
-        player_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "player.png", 3, 1);
+        player_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "player2.png", 4, 1);
 
 
         try {
@@ -160,6 +157,11 @@ public class ResourceManager {
     public void unloadMenuTextures()
     {
         menuTextureAtlas.unload();
+
+    }
+
+    public void unloadGameTextures(){
+        gameTextureAtlas.unload();
     }
 
     public void loadMenuTextures()

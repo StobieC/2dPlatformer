@@ -64,9 +64,9 @@ public abstract class Player extends AnimatedSprite {
         canRun = true;
 
         //ms per frame
-        final long[] PLAYER_ANIMATE = new long[] { 100, 100, 100 };
+        final long[] PLAYER_ANIMATE = new long[] { 100, 100, 100, 100 };
 
-        animate(PLAYER_ANIMATE, 0, 2, true);
+        animate(PLAYER_ANIMATE, 0, 3, true);
     }
 
     public void jump()
